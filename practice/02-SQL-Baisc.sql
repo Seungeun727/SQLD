@@ -52,3 +52,42 @@ CREATE TABLE EMP
 SELECT * FROM 서비스 WHERE 서비스명 = IS NULL;
 -- 보기처럼 데이터 입력시 SQL에서는 데이터 조회하려면
 SELECT * FROM 서비스 WHERE 서비스명 = '';
+
+--#41 ⭐⭐⭐⭐ 다시 이해할 것-> 이해하지 못함.
+-- keyword: 단일행 문자형 함수 중 라인수 구하기
+-- 해설
+-- 1. LENGTH: 문자열 길이 반환 함수
+-- 2. CHR : ASCII 코드의 문자 반환 함수 (CHR(10) -> 줄바꿈)
+-- 3. REPLACE: 문자열 치환 함수 (REPLACE(C1, CHR(10) -> 줄바꿈 제거)
+-- 기존 ROWNUM 1> LENGTH: 3, REPLACE 후: AA,  REPLACE(C1, CHR(10)) : 2
+-- 기존 ROWNUM 2> LENGTH: 5, REPLACE 후: BBB,  REPLACE(C1, CHR(10)) : 3
+
+-- #45 
+-- ISNULL 함수 결과값이 NULL 일시 지정된 값 반환함.
+-- <보기>는 실행 결과가 X를 반환한다.
+--SELECT ISNULL(COL2, 'X') FROM TAB1 WHERE COL1 = 'a';
+-- 왜 정답일까?
+-- 결과값이 NULL이 아닌 다른 값을 얻고자 할 때 ISNULL을 확인하는 함수를 사용한다.
+-- 칼럼의 NULL 값을 확인 시 ISNULL 함수 사용함.
+
+-- #48 
+-- Table1의 c1(1), c2(2,2), C3(3,3,3)
+-- SLECT SUM((COALESCE (C1, C2, C3)) FROM TAB1;
+-- COALESCE 함수는 임의 개수 표현식에서 NULL이 아닌 최초 표현식을 나타낸다.
+-- -> 모든 표현식이 NULL, NULL을 반환함.
+-- 왜 정답일까?
+-- ROW 1행에서 COALESCE(C1,C2,C3) -> COALESCE(1,2,3) 이기에 수행 결과는 6이다.
+-- 즉 한 행이라도 NULL이 있으면 수행 결과에 포함시키면 안된다.
+
+-- #53 : 오류가 발생하는 문장
+SELECT 메뉴ID, 사용유형코드, AVG(COUNT(*)) AS AVGCNT
+FROM 시스템 사용 이력
+GROUP BY 메뉴ID, 사용유형코드;
+-- 틀린 이유: GROUP BY 절에서 실행 결과는 1건이 되야 하기에
+-- SELECT 절에서 메뉴 ID와 사용유형코드는 사용할 수 없다.
+
+-- GROUP BY 절 특성
+-- 1. SELECT 절에 집계 함수 사용함 
+-- 2. 해당 함수는 NULL 값 가진 행 제외하고 수행함
+-- 3. SELECT 절과 달리 별칭명 사용하지 못함
+-- 4. 집계함수는 WHERE 절 오지 못함
